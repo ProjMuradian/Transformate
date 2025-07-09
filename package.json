@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "lint:fix": "next lint --fix"
+    "lint:fix": "next lint --fix",
+    "build:no-lint": "NEXT_DISABLE_ESLINT=true next build"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.6",
