@@ -39,7 +39,7 @@ export default function Home() {
               <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 Instantly & Free
               </span>
-            </h1>
+        </h1>
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -249,8 +249,8 @@ export default function Home() {
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300">
               We support all the popular file formats you need
-            </p>
-          </div>
+        </p>
+      </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {/* Images */}
