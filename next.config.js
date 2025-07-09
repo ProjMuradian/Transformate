@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: true,
-}
+  // SWC minification is now enabled by default in Next.js 15
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
