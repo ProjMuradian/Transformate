@@ -21,7 +21,7 @@ export default function Navbar({}): any {
         <Image
           alt="logo"
           className="w-40 cursor-pointer dark:invert"
-          src="/images/logo.svg"
+          src="/images/logo.png"
           height={100}
           width={170}
         />
