@@ -147,6 +147,85 @@ Before running this project, you need to install Node.js and Yarn on your Window
 - **In the terminal where the server is running:**
   - Press `Ctrl + C` to stop the development server
 
+## Deployment with GitHub CI/CD
+
+This project includes automated deployment to Vercel using GitHub Actions. The CI/CD pipeline will automatically build and deploy your application when you push to the main branch.
+
+### Setting up GitHub Actions for Vercel Deployment
+
+#### Step 1: Get Vercel Credentials
+
+1. **Install Vercel CLI:**
+
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Login to Vercel:**
+
+   ```bash
+   vercel login
+   ```
+
+3. **Get your Vercel tokens:**
+
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Navigate to Settings → Tokens
+   - Create a new token with appropriate permissions
+
+4. **Get Project and Org IDs:**
+   - Run: `vercel projects ls` to get your project ID
+   - Run: `vercel teams ls` to get your organization ID
+
+#### Step 2: Configure GitHub Secrets
+
+1. **Go to your GitHub repository**
+2. **Navigate to Settings → Secrets and variables → Actions**
+3. **Add the following secrets:**
+   - `VERCEL_TOKEN`: Your Vercel authentication token
+   - `VERCEL_ORG_ID`: Your Vercel organization ID
+   - `VERCEL_PROJECT_ID`: Your Vercel project ID
+
+#### Step 3: Deploy Your Project
+
+1. **Push your code to the main branch:**
+
+   ```bash
+   git add .
+   git commit -m "Initial deployment setup"
+   git push origin main
+   ```
+
+2. **Monitor the deployment:**
+
+   - Go to your GitHub repository
+   - Click on the "Actions" tab
+   - Watch the deployment workflow run
+
+3. **Access your deployed application:**
+   - The deployment URL will be provided in the GitHub Actions logs
+   - Or check your Vercel dashboard for the live URL
+
+### CI/CD Workflow Details
+
+The GitHub Actions workflow (`/.github/workflows/deploy.yml`) includes:
+
+- **Automatic triggers:** Push to main/master branch or pull requests
+- **Node.js setup:** Uses Node.js 18 with Yarn caching
+- **Dependency installation:** Installs packages with `yarn install --frozen-lockfile`
+- **Code quality checks:** Runs linting and type checking
+- **Build process:** Creates production build with `yarn build`
+- **Vercel deployment:** Automatically deploys to Vercel
+
+### Available Scripts
+
+- `yarn dev` - Start development server
+- `yarn build` - Build for production
+- `yarn start` - Start production server
+- `yarn lint` - Run ESLint
+- `yarn lint:fix` - Fix ESLint issues automatically
+- `yarn type-check` - Run TypeScript type checking
+
 ## Tech Stack
 
 - **Frontend**: Next.js 13 with App Router
