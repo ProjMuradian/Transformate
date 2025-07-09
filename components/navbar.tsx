@@ -43,7 +43,7 @@ export default function Navbar({}): any {
       </div>
       <div className="items-center hidden gap-2 md:flex">
         <ModeToggle />
-        <Link href="https://github.com/mozaddedalfeshani/muradian-convertor.git">
+        <Link href="https://github.com/mozaddedalfeshani/muradian_convertor.git">
           <Button
             variant="default"
             className="items-center hidden gap-2 bg-orange-600 rounded-full w-fit md:flex"

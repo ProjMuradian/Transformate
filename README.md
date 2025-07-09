@@ -42,7 +42,7 @@ A powerful online file conversion tool that allows you to convert images, audio,
 1. Clone the repository
 
 ```bash
-git clone https://github.com/mozaddedalfeshani/muradian-convertor.git
+git clone git@github.com:mozaddedalfeshani/muradian_convertor.git
 ```
 
 2. Install dependencies
