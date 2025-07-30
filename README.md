@@ -237,3 +237,40 @@ The GitHub Actions workflow (`/.github/workflows/deploy.yml`) includes:
 - **File Processing**: FFmpeg WebAssembly
 - **Deployment**: Vercel
 
+## Getting Started
+
+1. Clone the repository
+
+```bash
+git clone git@github.com:mozaddedalfeshani/muradian_convertor.git
+```
+
+2. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Run the development server
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+<h3><a style="color:#08b5ff" href="https://github.com/mozaddedalfeshani">Follow me on GitHub</a></h3>
