@@ -1,0 +1,12 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Host
+Host: https://muradianconvertor.com
+
+# Sitemaps
+Sitemap: https://muradianconvertor.com/sitemap.xml

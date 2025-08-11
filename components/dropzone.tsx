@@ -217,7 +217,7 @@ export default function Dropzone() {
       setIsReady(false);
       setIsConverting(false);
     } else checkIsReady();
-  }, [actions]);
+  }, [actions, checkIsReady]);
   useEffect(() => {
     load();
   }, []);
