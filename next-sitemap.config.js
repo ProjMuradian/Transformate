@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.SITE_URL || 'https://muradianconvertor.com',
+  siteUrl: process.env.SITE_URL || 'https://transformate.vercel.app',
   generateRobotsTxt: true,
   generateIndexSitemap: true,
   exclude: ['/admin/*', '/api/*'],
@@ -13,7 +13,7 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      'https://muradianconvertor.com/sitemap.xml',
+      'https://transformate.vercel.app/sitemap.xml',
     ],
   },
   changefreq: 'daily',
