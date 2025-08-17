@@ -1,6 +1,5 @@
 'use client';
 
-
 import {
  Clock,
  Copy,
@@ -11,16 +10,12 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
-
 import { useToast } from '@/hooks/use-toast';
 import { useTranscriber } from '@/hooks/useTranscriber';
 
-
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
 
 interface TranscriptionResult {
  text: string;
@@ -29,7 +24,6 @@ interface TranscriptionResult {
    timestamp: [number, number | null];
  }>;
 }
-
 
 export default function TranscribeComponent() {
  const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -47,9 +41,7 @@ export default function TranscribeComponent() {
  >([]);
  const { toast } = useToast();
 
-
  const transcriber = useTranscriber();
-
 
  const handleFileSelect = useCallback(
    (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +57,6 @@ export default function TranscribeComponent() {
          return;
        }
 
-
        setSelectedFile(file);
        setFileName(file.name);
        setTranscriptionResult(null);
@@ -73,7 +64,6 @@ export default function TranscribeComponent() {
    },
    [toast],
  );
-
 
  const handleSubmit = useCallback(async () => {
    if (!selectedFile) {
@@ -85,9 +75,7 @@ export default function TranscribeComponent() {
      return;
    }
 
-
    setIsProcessing(true);
-
 
    try {
      // Process the selected file directly
@@ -104,16 +92,13 @@ export default function TranscribeComponent() {
          return;
        }
 
-
        try {
          // Create audio context and decode the audio from video
          const audioContext = new AudioContext({ sampleRate: 16000 });
          const decoded = await audioContext.decodeAudioData(arrayBuffer);
 
-
          // Start transcription using the transcriber
          transcriber.start(decoded);
-
 
          toast({
            title: 'Transcription started',
@@ -129,7 +114,6 @@ export default function TranscribeComponent() {
        }
      };
 
-
      reader.readAsArrayBuffer(selectedFile);
    } catch (error) {
      toast({
@@ -141,10 +125,8 @@ export default function TranscribeComponent() {
    }
  }, [selectedFile, transcriber, toast]);
 
-
  const handleDownloadTranscription = useCallback(() => {
    if (!transcriptionResult) return;
-
 
    const content = transcriptionResult.text;
    const blob = new Blob([content], { type: 'text/plain' });
@@ -157,18 +139,15 @@ export default function TranscribeComponent() {
    document.body.removeChild(a);
    URL.revokeObjectURL(url);
 
-
    toast({
      title: 'Downloaded',
      description: 'Transcription saved to your device',
    });
  }, [transcriptionResult, fileName, toast]);
 
-
  const handleCopyTranscription = useCallback(async () => {
    const textToCopy = editableText || transcriptionResult?.text || '';
    if (!textToCopy) return;
-
 
    try {
      await navigator.clipboard.writeText(textToCopy);
@@ -185,11 +164,9 @@ export default function TranscribeComponent() {
    }
  }, [editableText, transcriptionResult, toast]);
 
-
  const handleTextChange = useCallback((newText: string) => {
    setEditableText(newText);
  }, []);
-
 
  const handleChunkChange = useCallback((index: number, newText: string) => {
    setEditableChunks((prev) =>
@@ -198,7 +175,6 @@ export default function TranscribeComponent() {
      ),
    );
  }, []);
-
 
  const handleTimestampChange = useCallback(
    (index: number, startTime: number, endTime: number | null) => {
@@ -210,7 +186,6 @@ export default function TranscribeComponent() {
    },
    [],
  );
-
 
  const handleCopyToClipboard = useCallback(async () => {
    try {
@@ -241,7 +216,6 @@ export default function TranscribeComponent() {
    }
  }, [toast]);
 
-
  // Update transcription result when transcriber output changes
  useEffect(() => {
    if (
@@ -257,7 +231,6 @@ export default function TranscribeComponent() {
      setEditableText(transcriber.output.text || '');
      setEditableChunks(transcriber.output.chunks || []);
      setIsProcessing(false);
-
 
      // Save to localStorage
      try {
@@ -279,14 +252,12 @@ export default function TranscribeComponent() {
    }
  }, [transcriber.output, fileName, toast]);
 
-
  // Handle transcription completion
  useEffect(() => {
    if (!transcriber.isBusy && transcriptionResult && isProcessing) {
      setIsProcessing(false);
    }
  }, [transcriber.isBusy, transcriptionResult, isProcessing]);
-
 
  // Auto-save edited content to localStorage
  useEffect(() => {
@@ -305,7 +276,6 @@ export default function TranscribeComponent() {
              : transcriptionResult.chunks,
        };
 
-
        localStorage.setItem(
          'transcriptionData',
          JSON.stringify({
@@ -320,283 +290,233 @@ export default function TranscribeComponent() {
    }
  }, [editableText, editableChunks, transcriptionResult, fileName]);
 
+ // Auto-scroll to new content
+ useEffect(() => {
+   if (transcriptionResult) {
+     // Scroll to bottom of content area like ChatGPT
+     const contentArea = document.querySelector('.overflow-y-auto');
+     if (contentArea) {
+       contentArea.scrollTop = contentArea.scrollHeight;
+     }
+   }
+ }, [transcriptionResult]);
+
+ useEffect(() => {
+   if (transcriber.isBusy || transcriber.isModelLoading) {
+     // Scroll to bottom of content area like ChatGPT
+     const contentArea = document.querySelector('.overflow-y-auto');
+     if (contentArea) {
+       contentArea.scrollTop = contentArea.scrollHeight;
+     }
+   }
+ }, [transcriber.isBusy, transcriber.isModelLoading]);
 
  return (
-   <div className='container mx-auto max-w-7xl space-y-6 p-4 sm:space-y-8 sm:py-8'>
-     <div className='mb-6 sm:mb-8'>
-       <h1 className='text-2xl font-bold text-foreground sm:text-3xl'>
-         Upload And Get Transcribe
-       </h1>
-       <p className='mt-2 text-sm text-muted-foreground sm:text-base'>
+   <div className="flex h-screen flex-col bg-background">
+     {/* Header */}
+     <div className="border-b bg-background px-4 py-3">
+       <h1 className="text-lg font-semibold">Video Transcription</h1>
+       <p className="text-sm text-muted-foreground">
          Upload video files to generate transcriptions using AI
        </p>
      </div>
 
-
-     <div className='space-y-6'>
-       {/* Upload Section */}
-       <Card>
-         <CardHeader>
-           <CardTitle className='flex items-center gap-2'>
-             <Upload className='h-5 w-5' />
-             Upload Video File
-           </CardTitle>
-         </CardHeader>
-         <CardContent className='space-y-4'>
-           <div className='space-y-2'>
-             <Label htmlFor='video-upload'>Select Video File</Label>
-             <Input
-               id='video-upload'
-               type='file'
-               accept='video/*'
-               onChange={handleFileSelect}
-               className='cursor-pointer'
-             />
-           </div>
-
-
-           {selectedFile && (
-             <div className='flex items-center gap-2 rounded-md bg-muted p-3'>
-               <FileVideo className='h-4 w-4 text-blue-600' />
-               <span className='text-sm font-medium'>{fileName}</span>
-             </div>
-           )}
-
-
-           {/* Toggle Button - Only visible before submit */}
-           {selectedFile && !isProcessing && !transcriber.isBusy && (
-             <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-               <Label className='text-sm font-medium'>View Mode:</Label>
-               <div className='flex rounded-md border'>
-                 <Button
-                   type='button'
-                   variant={viewMode === 'text' ? 'default' : 'outline'}
-                   size='sm'
-                   onClick={() => setViewMode('text')}
-                   className='rounded-r-none border-r-0'
-                 >
-                   <FileVideo className='mr-2 h-4 w-4' />
-                   Text
-                 </Button>
-                 <Button
-                   type='button'
-                   variant={viewMode === 'timestamps' ? 'default' : 'outline'}
-                   size='sm'
-                   onClick={() => setViewMode('timestamps')}
-                   className='rounded-l-none'
-                 >
-                   <Clock className='mr-2 h-4 w-4' />
-                   Timestamps
-                 </Button>
+     {/* Simple Content Area */}
+     <div className="flex-1 overflow-y-auto px-4 py-6">
+       <div className="mx-auto max-w-4xl space-y-6">
+         {/* Transcription Result - No Box */}
+         {transcriptionResult && (
+           <div className="space-y-4">
+             {/* Text View */}
+             {viewMode === 'text' && (
+               <div className="space-y-3">
+                 <div className="flex items-center justify-between">
+                   <span className="text-sm font-medium">Transcription</span>
+                   <div className="flex gap-2">
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={handleCopyTranscription}
+                     >
+                       <Copy className="mr-2 h-4 w-4" />
+                       Copy
+                     </Button>
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={handleDownloadTranscription}
+                     >
+                       <Download className="mr-2 h-4 w-4" />
+                       Download
+                     </Button>
+                   </div>
+                 </div>
+                 <div className="font-mono text-sm leading-relaxed">
+                   {editableText}
+                 </div>
                </div>
-             </div>
-           )}
-
-
-           <Button
-             onClick={handleSubmit}
-             disabled={!selectedFile || isProcessing || transcriber.isBusy}
-             className='w-full'
-           >
-             {isProcessing || transcriber.isBusy ? (
-               <>
-                 <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                 {isProcessing ? 'Processing...' : 'Transcribing...'}
-               </>
-             ) : (
-               'Submit for Transcription'
              )}
-           </Button>
-         </CardContent>
-       </Card>
 
-
-       {/* Status Section */}
-       {(transcriber.isModelLoading || transcriber.isBusy) && (
-         <Card>
-           <CardHeader>
-             <CardTitle>Processing Status</CardTitle>
-           </CardHeader>
-           <CardContent>
-             <div className='space-y-3'>
-               <div className='flex items-center gap-3'>
-                 <Loader2 className='h-5 w-5 animate-spin text-blue-600' />
-                 <span className='text-sm'>
-                   {transcriber.isModelLoading
-                     ? 'Loading AI model...'
-                     : 'Generating transcription...'}
-                 </span>
-               </div>
-
-
-               {transcriber.progressItems.length > 0 && (
-                 <div className='space-y-2'>
-                   {transcriber.progressItems.map((item, index) => (
-                     <div key={index} className='space-y-1'>
-                       <div className='flex justify-between text-xs'>
-                         <span>{item.file}</span>
-                         <span>{Math.round(item.progress * 100)}%</span>
-                       </div>
-                       <div className='h-2 w-full rounded-full bg-gray-200'>
-                         <div
-                           className='h-2 rounded-full bg-blue-600 transition-all duration-300'
-                           style={{ width: `${item.progress * 100}%` }}
+             {/* Timestamps View */}
+             {viewMode === 'timestamps' && editableChunks.length > 0 && (
+               <div className="space-y-3">
+                 <div className="flex items-center justify-between">
+                   <span className="text-sm font-medium">Timestamps</span>
+                   <Button
+                     variant="outline"
+                     size="sm"
+                     onClick={handleCopyToClipboard}
+                   >
+                     <Copy className="mr-2 h-4 w-4" />
+                     Copy JSON
+                   </Button>
+                 </div>
+                 <div className="space-y-3">
+                   {editableChunks.map((chunk, index) => (
+                     <div
+                       key={index}
+                       className="flex flex-col gap-3 sm:flex-row sm:items-start"
+                     >
+                       <div className="flex min-w-[120px] flex-col gap-2">
+                         <Input
+                           type="number"
+                           step="0.1"
+                           value={chunk.timestamp[0]?.toFixed(1) || '0'}
+                           onChange={(e) =>
+                             handleTimestampChange(
+                               index,
+                               parseFloat(e.target.value) || 0,
+                               chunk.timestamp[1],
+                             )
+                           }
+                           className="w-full text-xs sm:w-20"
+                           placeholder="Start"
                          />
+                         <Input
+                           type="number"
+                           step="0.1"
+                           value={chunk.timestamp[1]?.toFixed(1) || '0'}
+                           onChange={(e) =>
+                             handleTimestampChange(
+                               index,
+                               chunk.timestamp[0],
+                               parseFloat(e.target.value) || 0,
+                             )
+                           }
+                           className="w-full text-xs sm:w-20"
+                           placeholder="End"
+                         />
+                       </div>
+                       <div className="flex-1 font-mono text-sm">
+                         {chunk.text}
                        </div>
                      </div>
                    ))}
                  </div>
-               )}
+               </div>
+             )}
+           </div>
+         )}
+
+         {/* Processing Status */}
+         {(transcriber.isModelLoading || transcriber.isBusy) && (
+           <div className="space-y-3">
+             <div className="flex items-center gap-3">
+               <Loader2 className="h-5 w-5 animate-spin text-primary" />
+               <span className="text-sm">
+                 {transcriber.isModelLoading
+                   ? 'Loading AI model...'
+                   : 'Generating transcription...'}
+               </span>
              </div>
-           </CardContent>
-         </Card>
-       )}
 
-
-       {/* Results Section */}
-       {transcriptionResult && (
-         <Card>
-           <CardHeader>
-             <CardTitle className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-               <span>Transcription Result</span>
-               <div className='flex flex-wrap gap-2'>
-                 <Button
-                   variant='outline'
-                   size='sm'
-                   onClick={handleCopyTranscription}
-                   className='w-full sm:w-auto'
-                 >
-                   <Copy className='mr-2 h-4 w-4' />
-                   Copy Text
-                 </Button>
-                 <Button
-                   variant='outline'
-                   size='sm'
-                   onClick={handleCopyToClipboard}
-                   className='w-full sm:w-auto'
-                 >
-                   <Copy className='mr-2 h-4 w-4' />
-                   Copy JSON
-                 </Button>
-                 <Button
-                   variant='outline'
-                   size='sm'
-                   onClick={handleDownloadTranscription}
-                   className='w-full sm:w-auto'
-                 >
-                   <Download className='mr-2 h-4 w-4' />
-                   Download
-                 </Button>
-               </div>
-             </CardTitle>
-           </CardHeader>
-           <CardContent>
-             <div className='space-y-4'>
-               {/* View Mode Toggle for Results */}
-               <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
-                 <Label className='text-sm font-medium'>Display Mode:</Label>
-                 <div className='flex rounded-md border'>
-                   <Button
-                     type='button'
-                     variant={viewMode === 'text' ? 'default' : 'outline'}
-                     size='sm'
-                     onClick={() => setViewMode('text')}
-                     className='rounded-r-none border-r-0'
-                   >
-                     <FileVideo className='mr-2 h-4 w-4' />
-                     Text
-                   </Button>
-                   <Button
-                     type='button'
-                     size='sm'
-                     variant={viewMode === 'timestamps' ? 'default' : 'outline'}
-                     onClick={() => setViewMode('timestamps')}
-                     className='rounded-l-none'
-                   >
-                     <Clock className='mr-2 h-4 w-4' />
-                     Timestamps
-                   </Button>
-                 </div>
-               </div>
-
-
-               {/* Text View */}
-               {viewMode === 'text' && (
-                 <div className='space-y-2'>
-                   <Label className='text-sm font-medium'>
-                     Transcription Text (Editable):
-                   </Label>
-                   <textarea
-                     value={editableText}
-                     onChange={(e) => handleTextChange(e.target.value)}
-                     className='max-h-96 w-full resize-none rounded-md border bg-muted/50 p-3 font-mono text-sm sm:p-4'
-                     rows={15}
-                     placeholder='Transcription text will appear here...'
-                   />
-                 </div>
-               )}
-
-
-               {/* Timestamps View */}
-               {viewMode === 'timestamps' && editableChunks.length > 0 && (
-                 <div className='space-y-2'>
-                   <Label className='text-sm font-medium'>
-                     Timestamps (Editable):
-                   </Label>
-                   <div className='max-h-96 space-y-3 overflow-y-auto'>
-                     {editableChunks.map((chunk, index) => (
+             {transcriber.progressItems.length > 0 && (
+               <div className="space-y-2">
+                 {transcriber.progressItems.map((item, index) => (
+                   <div key={index} className="space-y-1">
+                     <div className="flex justify-between text-xs">
+                       <span>{item.file}</span>
+                       <span>{Math.round(item.progress * 100)}%</span>
+                     </div>
+                     <div className="h-2 w-full rounded-full bg-muted">
                        <div
-                         key={index}
-                         className='flex flex-col gap-3 rounded-md border p-3 sm:flex-row sm:items-start'
-                       >
-                         <div className='flex min-w-[120px] flex-col gap-2'>
-                           <Input
-                             type='number'
-                             step='0.1'
-                             value={chunk.timestamp[0]?.toFixed(1) || '0'}
-                             onChange={(e) =>
-                               handleTimestampChange(
-                                 index,
-                                 parseFloat(e.target.value) || 0,
-                                 chunk.timestamp[1],
-                               )
-                             }
-                             className='w-full text-xs sm:w-20'
-                             placeholder='Start'
-                           />
-                           <Input
-                             type='number'
-                             step='0.1'
-                             value={chunk.timestamp[1]?.toFixed(1) || '0'}
-                             onChange={(e) =>
-                               handleTimestampChange(
-                                 index,
-                                 chunk.timestamp[0],
-                                 parseFloat(e.target.value) || 0,
-                               )
-                             }
-                             className='w-full text-xs sm:w-20'
-                             placeholder='End'
-                           />
-                         </div>
-                         <textarea
-                           value={chunk.text}
-                           onChange={(e) =>
-                             handleChunkChange(index, e.target.value)
-                           }
-                           className='flex-1 resize-none rounded-md border bg-muted/50 p-2 text-sm'
-                           rows={2}
-                           placeholder='Chunk text...'
-                         />
-                       </div>
-                     ))}
+                         className="h-2 rounded-full bg-primary transition-all duration-300"
+                         style={{ width: `${item.progress * 100}%` }}
+                       />
+                     </div>
                    </div>
-                 </div>
+                 ))}
+               </div>
+             )}
+           </div>
+         )}
+       </div>
+     </div>
+
+     {/* Simple Video Upload at Bottom with Toggle Beside Transcribe Button */}
+     <div className="border-t bg-background p-4">
+       <div className="mx-auto max-w-4xl">
+         <div className="space-y-4">
+           <div className="text-center">
+             <h3 className="text-lg font-medium">Upload Video File</h3>
+             <p className="text-sm text-muted-foreground mt-1">
+               Select a video file to transcribe
+             </p>
+           </div>
+           
+           <div className="flex gap-3">
+             <Input
+               id="video-upload-main"
+               type="file"
+               accept="video/*"
+               onChange={handleFileSelect}
+               className="flex-1 cursor-pointer"
+             />
+             <Button
+               onClick={handleSubmit}
+               disabled={!selectedFile || isProcessing || transcriber.isBusy}
+               className="px-6"
+             >
+               {isProcessing || transcriber.isBusy ? (
+                 <>
+                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                   {isProcessing ? 'Processing...' : 'Transcribing...'}
+                 </>
+               ) : (
+                 'Transcribe'
                )}
+             </Button>
+             
+             {/* Toggle Button Beside Transcribe Button */}
+             {transcriptionResult && (
+               <Button
+                 variant="outline"
+                 onClick={() => setViewMode(viewMode === 'text' ? 'timestamps' : 'text')}
+                 title={`Switch to ${viewMode === 'text' ? 'Timestamps' : 'Text'} view`}
+               >
+                 {viewMode === 'text' ? (
+                   <>
+                     <Clock className="mr-2 h-4 w-4" />
+                     Timestamps
+                   </>
+                 ) : (
+                   <>
+                     <FileVideo className="mr-2 h-4 w-4" />
+                     Text
+                   </>
+                 )}
+               </Button>
+             )}
+           </div>
+
+           {selectedFile && (
+             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+               <FileVideo className="h-4 w-4" />
+               <span>{fileName}</span>
              </div>
-           </CardContent>
-         </Card>
-       )}
+           )}
+         </div>
+       </div>
      </div>
    </div>
  );
