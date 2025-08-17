@@ -332,24 +332,6 @@ export default function TranscribeComponent() {
                <div className="space-y-3">
                  <div className="flex items-center justify-between">
                    <span className="text-sm font-medium">Transcription</span>
-                   <div className="flex gap-2">
-                     <Button
-                       variant="outline"
-                       size="sm"
-                       onClick={handleCopyTranscription}
-                     >
-                       <Copy className="mr-2 h-4 w-4" />
-                       Copy
-                     </Button>
-                     <Button
-                       variant="outline"
-                       size="sm"
-                       onClick={handleDownloadTranscription}
-                     >
-                       <Download className="mr-2 h-4 w-4" />
-                       Download
-                     </Button>
-                   </div>
                  </div>
                  <div className="font-mono text-sm leading-relaxed">
                    {editableText}
@@ -362,14 +344,6 @@ export default function TranscribeComponent() {
                <div className="space-y-3">
                  <div className="flex items-center justify-between">
                    <span className="text-sm font-medium">Timestamps</span>
-                   <Button
-                     variant="outline"
-                     size="sm"
-                     onClick={handleCopyToClipboard}
-                   >
-                     <Copy className="mr-2 h-4 w-4" />
-                     Copy JSON
-                   </Button>
                  </div>
                  <div className="space-y-3">
                    {editableChunks.map((chunk, index) => (
@@ -453,7 +427,7 @@ export default function TranscribeComponent() {
        </div>
      </div>
 
-     {/* Simple Video Upload at Bottom with Toggle Beside Transcribe Button */}
+     {/* Simple Video Upload at Bottom with All Action Buttons Together */}
      <div className="border-t bg-background p-4">
        <div className="mx-auto max-w-4xl">
          <div className="space-y-4">
@@ -505,6 +479,30 @@ export default function TranscribeComponent() {
                      Text
                    </>
                  )}
+               </Button>
+             )}
+             
+             {/* Copy Button - Only show when transcription exists */}
+             {transcriptionResult && (
+               <Button
+                 variant="outline"
+                 onClick={handleCopyTranscription}
+                 title="Copy transcription text"
+               >
+                 <Copy className="mr-2 h-4 w-4" />
+                 Copy
+               </Button>
+             )}
+             
+             {/* Copy JSON Button - Only show when in timestamps view */}
+             {transcriptionResult && viewMode === 'timestamps' && (
+               <Button
+                 variant="outline"
+                 onClick={handleCopyToClipboard}
+                 title="Copy timestamps as JSON"
+               >
+                 <Copy className="mr-2 h-4 w-4" />
+                 Copy JSON
                </Button>
              )}
            </div>
