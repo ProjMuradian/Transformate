@@ -312,7 +312,7 @@ export default function TranscribeComponent() {
  }, [transcriber.isBusy, transcriber.isModelLoading]);
 
  return (
-   <div className="flex h-screen flex-col bg-background">
+   <div className="flex max-h-[80vh] flex-col bg-background">
      {/* Header */}
      <div className="border-b bg-background px-4 py-3">
        <h1 className="text-lg font-semibold">Video Transcription</h1>
