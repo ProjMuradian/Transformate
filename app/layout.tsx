@@ -25,12 +25,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <GA GA_MEASUREMENT_ID="G-52GQ441X7H" />
-      <meta
-        name="google-site-verification"
-        content="V8lmEvFOdYBlChgR6pYABBZBhI1EFnPb1YuxTTdHXMU"
-      />
+      <head>
+        <meta
+          name="google-site-verification"
+          content="V8lmEvFOdYBlChgR6pYABBZBhI1EFnPb1YuxTTdHXMU"
+        />
+      </head>
       <body className={inter.className}>
+        <GA GA_MEASUREMENT_ID="G-52GQ441X7H" />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
