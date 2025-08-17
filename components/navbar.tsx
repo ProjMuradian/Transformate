@@ -40,6 +40,11 @@ export default function Navbar({}): any {
             Privacy Policy
           </Button>
         </Link>
+        <Link href="/transcribe">
+          <Button variant="ghost" className="font-semibold text-md">
+            Transcribe
+          </Button>
+        </Link>
       </div>
       <div className="items-center hidden gap-2 md:flex">
         <ModeToggle />
