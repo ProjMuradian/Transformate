@@ -1,9 +1,10 @@
 import React from 'react'
+import TranscribeComponent from '@/components/TranscribeComponent'
 
 const page = () => {
   return (
     <div>
-        <h1>Transcribe</h1>
+        <TranscribeComponent />
     </div>
   )
 }
