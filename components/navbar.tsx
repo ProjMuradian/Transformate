@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { BsGithub } from "react-icons/bs";
 import {
   Sheet,
   SheetContent,
@@ -43,14 +42,14 @@ export default function Navbar({}): any {
       </div>
       <div className="items-center hidden gap-2 md:flex">
         <ModeToggle />
-        <Link href="https://github.com/mozaddedalfeshani/muradian_convertor.git">
+        <Link href="/convert">
           <Button
             variant="default"
-            className="items-center hidden gap-2 bg-orange-600 rounded-full w-fit md:flex"
+            className="items-center hidden gap-2 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 dark:from-orange-400 dark:to-pink-400 dark:hover:from-orange-500 dark:hover:to-pink-500 rounded-full w-fit md:flex shadow-lg hover:shadow-xl transition-all duration-300 text-white"
             size="lg">
-            <span>Github Repo</span>
+            <span>Get Started</span>
             <span className="text-xl">
-              <BsGithub />
+              ✨
             </span>
           </Button>
         </Link>
