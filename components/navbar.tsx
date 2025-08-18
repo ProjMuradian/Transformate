@@ -45,7 +45,7 @@ export default function Navbar({}): any {
         <Link href="/convert">
           <Button
             variant="default"
-            className="items-center hidden gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-full w-fit md:flex shadow-lg hover:shadow-xl transition-all duration-300 text-white"
+            className="items-center hidden gap-2 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 dark:from-orange-400 dark:to-pink-400 dark:hover:from-orange-500 dark:hover:to-pink-500 rounded-full w-fit md:flex shadow-lg hover:shadow-xl transition-all duration-300 text-white"
             size="lg">
             <span>Get Started</span>
             <span className="text-xl">
