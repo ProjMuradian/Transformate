@@ -9,8 +9,8 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'MuradianConvertor - Free Unlimited File Converter',
-    short_name: 'MuradianConvertor',
+    name: 'Transformate - Free Unlimited File Converter by Muradian',
+    short_name: 'Transformate',
     description: 'Transform images, videos, and audio files with cutting-edge technology. No registration, no limits, no watermarks.',
     start_url: '/',
     display: 'standalone',

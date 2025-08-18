@@ -1,12 +1,21 @@
 export default function About() {
   return (
     <div className="space-y-12 text-md md:text-lg text-muted-foreground pb-4 md:pb-8">
-      <p>
-        Introducing MuradianConvertor, the ultimate multimedia conversion
-        powerhouse that empowers you to transform images, audio files, and
-        videos with unprecedented freedom, all at absolutely no cost! Say
-        goodbye to limitations and hello to limitless creative possibilities.
-      </p>
+      <div className="text-center space-y-6">
+        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white">
+          About Transformate
+        </h1>
+        <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300">
+          by Muradian
+        </p>
+        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          Introducing Transformate, the ultimate multimedia conversion
+          powerhouse that empowers you to transform images, audio files, and
+          videos with unprecedented freedom, all at absolutely no cost! Say
+          goodbye to limitations and hello to limitless creative possibilities.
+        </p>
+      </div>
+
       <div className="space-y-2">
         <h2 className="text-xl md:text-2xl font-medium text-muted-foreground">
           🖼️ Image Conversion:
@@ -59,7 +68,7 @@ export default function About() {
           🌐 Accessible Anywhere:
         </h2>
         <p>
-          Access MuradianConvertor from any device with an internet connection.
+          Access Transformate from any device with an internet connection.
           Whether you're on your computer, tablet, or smartphone, you can use
           our platform with ease.
         </p>
@@ -100,19 +109,18 @@ export default function About() {
 
       <div className="space-y-2">
         <h2 className="text-xl md:text-2xl font-medium text-muted-foreground">
-          🌟 It's Free, It's Powerful, It's MuradianConvertor:
+          🌟 It's Free, It's Powerful, It's Transformate:
         </h2>
         <p>
           Experience the freedom to convert images, audio, and video without
           boundaries. Elevate your multimedia projects with the unlimited
-          potential of MuradianConvertor.
+          potential of Transformate.
         </p>
       </div>
 
       <p>
-        Join the revolution of content creators, professionals, and enthusiasts
-        who are transforming the way they work with multimedia. Get started
-        today and let your creativity shine like never before!
+        Ready to experience the future of file conversion? Discover the full
+        potential of Transformate.
       </p>
     </div>
   );

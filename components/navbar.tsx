@@ -30,14 +30,9 @@ export default function Navbar({}): any {
         <Button variant="ghost" className="font-semibold text-md">
           <Link href="/">Home</Link>
         </Button>
-        <Link href="/about">
+        <Link href="/convert">
           <Button variant="ghost" className="font-semibold text-md">
-            About
-          </Button>
-        </Link>
-        <Link href="/privacy-policy">
-          <Button variant="ghost" className="font-semibold text-md">
-            Privacy Policy
+            Convert
           </Button>
         </Link>
         <Link href="/transcribe">
@@ -81,20 +76,20 @@ export default function Navbar({}): any {
                   </Link>
                 </SheetTrigger>
                 <SheetTrigger asChild>
-                  <Link href="/about">
+                  <Link href="/convert">
                     <Button
                       variant="link"
                       className="w-full font-semibold text-md">
-                      About
+                      Convert
                     </Button>
                   </Link>
                 </SheetTrigger>
                 <SheetTrigger asChild>
-                  <Link href="/privacy-policy">
+                  <Link href="/transcribe">
                     <Button
                       variant="link"
                       className="w-full font-semibold text-md">
-                      Privacy Policy
+                      Transcribe
                     </Button>
                   </Link>
                 </SheetTrigger>
