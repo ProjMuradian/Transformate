@@ -10,4 +10,7 @@ export type Action = {
   is_error?: boolean;
   url?: any;
   output?: any;
+  progress?: number;
+  status?: string;
+  eta?: string;
 };

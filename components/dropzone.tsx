@@ -29,6 +29,12 @@ import { Button } from "./ui/button";
 import loadFfmpeg from "@/utils/load-ffmpeg";
 import type { Action } from "@/types";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { HiOutlineEye } from "react-icons/hi";
+import { ProgressToast } from "./ui/progress-toast";
+
+interface DropzoneProps {
+  onPreview?: (action: Action) => void;
+}
 
 const extensions = {
   image: [
@@ -66,7 +72,7 @@ const extensions = {
   audio: ["mp3", "wav", "ogg", "aac", "wma", "flac", "m4a"],
 };
 
-export default function Dropzone() {
+export default function Dropzone({ onPreview }: DropzoneProps) {
   // variables & hooks
   const { toast } = useToast();
   const [is_hover, setIsHover] = useState<boolean>(false);
@@ -76,6 +82,12 @@ export default function Dropzone() {
   const [is_loaded, setIsLoaded] = useState<boolean>(false);
   const [is_converting, setIsConverting] = useState<boolean>(false);
   const [is_done, setIsDone] = useState<boolean>(false);
+  const [showProgressToast, setShowProgressToast] = useState<boolean>(false);
+  const [currentProgress, setCurrentProgress] = useState<{ progress: number; status: string; fileName: string }>({
+    progress: 0,
+    status: '',
+    fileName: ''
+  });
   const ffmpegRef = useRef<any>(null);
   const [defaultValues, setDefaultValues] = useState<string>("video");
   const [selcted, setSelected] = useState<string>("...");
@@ -130,9 +142,35 @@ export default function Dropzone() {
     }));
     setActions(tmp_actions);
     setIsConverting(true);
+    setShowProgressToast(true);
+    
     for (let action of tmp_actions) {
       try {
-        const { url, output } = await convertFile(ffmpegRef.current, action);
+        setCurrentProgress({
+          progress: 0,
+          status: 'Starting conversion...',
+          fileName: action.file_name
+        });
+
+        const { url, output } = await convertFile(
+          ffmpegRef.current, 
+          action,
+          (progress: number, status: string, eta?: string) => {
+            setCurrentProgress({
+              progress,
+              status,
+              fileName: action.file_name
+            });
+            
+            // Update action progress
+            setActions(prev => prev.map(a => 
+              a.file_name === action.file_name 
+                ? { ...a, progress, status }
+                : a
+            ));
+          }
+        );
+        
         tmp_actions = tmp_actions.map((elt) =>
           elt === action
             ? {
@@ -141,10 +179,24 @@ export default function Dropzone() {
                 is_converting: false,
                 url,
                 output,
+                progress: 100,
+                status: 'Conversion complete!'
               }
             : elt
         );
         setActions(tmp_actions);
+        
+        // Show completion briefly
+        setCurrentProgress({
+          progress: 100,
+          status: 'Conversion complete!',
+          fileName: action.file_name
+        });
+        
+        setTimeout(() => {
+          setShowProgressToast(false);
+        }, 2000);
+        
       } catch (err) {
         tmp_actions = tmp_actions.map((elt) =>
           elt === action
@@ -153,10 +205,12 @@ export default function Dropzone() {
                 is_converted: false,
                 is_converting: false,
                 is_error: true,
+                status: 'Conversion failed'
               }
             : elt
         );
         setActions(tmp_actions);
+        setShowProgressToast(false);
       }
     }
     setIsDone(true);
@@ -234,139 +288,196 @@ export default function Dropzone() {
         {actions.map((action: Action, i: any) => (
           <div
             key={i}
-            className="w-full py-4 space-y-2 lg:py-0 relative cursor-pointer rounded-xl border h-fit lg:h-20 px-4 lg:px-10 flex flex-wrap lg:flex-nowrap items-center justify-between"
+            className="w-full py-4 space-y-2 lg:py-0 relative cursor-pointer rounded-xl border h-fit lg:h-20 px-4 lg:px-10 flex flex-wrap lg:flex-nowrap items-center justify-between bg-background hover:bg-muted/50 transition-colors"
           >
             {!is_loaded && (
               <Skeleton className="h-full w-full -ml-10 cursor-progress absolute rounded-xl" />
             )}
-            <div className="flex gap-4 items-center">
-              <span className="text-2xl text-orange-600">
+            <div className="flex gap-4 items-center flex-1 min-w-0">
+              <span className="text-2xl text-orange-600 flex-shrink-0">
                 {fileToIcon(action.file_type)}
               </span>
-              <div className="flex items-center gap-1 w-96">
-                <span className="text-md font-medium overflow-x-hidden">
+              <div className="flex items-center gap-1 min-w-0">
+                <span className="text-md font-medium overflow-hidden text-ellipsis whitespace-nowrap">
                   {compressFileName(action.file_name)}
                 </span>
-                <span className="text-muted-foreground text-sm">
+                <span className="text-muted-foreground text-sm flex-shrink-0">
                   ({bytesToSize(action.file_size)})
                 </span>
               </div>
             </div>
 
-            {action.is_error ? (
-              <Badge variant="destructive" className="flex gap-2">
-                <span>Error Converting File</span>
-                <BiError />
-              </Badge>
-            ) : action.is_converted ? (
-              <Badge variant="default" className="flex gap-2 bg-green-500">
-                <span>Done</span>
-                <MdDone />
-              </Badge>
-            ) : action.is_converting ? (
-              <Badge variant="default" className="flex gap-2">
-                <span>Converting</span>
-                <span className="animate-spin">
-                  <ImSpinner3 />
-                </span>
-              </Badge>
-            ) : (
-              <div className="text-muted-foreground text-md flex items-center gap-4">
-                <span>Convert to</span>
-                <Select
-                  onValueChange={(value) => {
-                    if (extensions.audio.includes(value)) {
-                      setDefaultValues("audio");
-                    } else if (extensions.video.includes(value)) {
-                      setDefaultValues("video");
-                    }
-                    setSelected(value);
-                    updateAction(action.file_name, value);
-                  }}
-                  value={selcted}
-                >
-                  <SelectTrigger className="w-32 outline-none focus:outline-none focus:ring-0 text-center text-muted-foreground bg-background text-md font-medium">
-                    <SelectValue placeholder="..." />
-                  </SelectTrigger>
-                  <SelectContent className="h-fit">
-                    {action.file_type.includes("image") && (
-                      <div className="grid grid-cols-2 gap-2 w-fit">
-                        {extensions.image.map((elt, i) => (
-                          <div key={i} className="col-span-1 text-center">
-                            <SelectItem value={elt} className="mx-auto">
-                              {elt}
-                            </SelectItem>
-                          </div>
-                        ))}
+            <div className="flex items-center gap-4 flex-shrink-0">
+              {action.is_error ? (
+                <Badge variant="destructive" className="flex gap-2">
+                  <span>Error Converting File</span>
+                  <BiError />
+                </Badge>
+              ) : action.is_converted ? (
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className="flex gap-2">
+                    <span>Converted</span>
+                    <MdDone />
+                  </Badge>
+                  {action.to && ['3gp', '3g2', 'flv', 'wmv'].includes(action.to.toLowerCase()) && (
+                    <Badge variant="outline">
+                      <span className="text-xs">Limited Preview</span>
+                    </Badge>
+                  )}
+                </div>
+              ) : action.is_converting ? (
+                <div className="flex items-center gap-3">
+                  <Badge variant="default" className="flex gap-2">
+                    <span>Converting</span>
+                    <span className="animate-spin">
+                      <ImSpinner3 />
+                    </span>
+                  </Badge>
+                  {action.progress !== undefined && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 bg-muted rounded-full h-2">
+                        <div 
+                          className="bg-primary h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${action.progress}%` }}
+                        />
                       </div>
-                    )}
-                    {action.file_type.includes("video") && (
-                      <Tabs defaultValue={defaultValues} className="w-full">
-                        <TabsList className="w-full">
-                          <TabsTrigger value="video" className="w-full">
-                            Video
-                          </TabsTrigger>
-                          <TabsTrigger value="audio" className="w-full">
-                            Audio
-                          </TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="video">
-                          <div className="grid grid-cols-3 gap-2 w-fit">
-                            {extensions.video.map((elt, i) => (
-                              <div key={i} className="col-span-1 text-center">
-                                <SelectItem value={elt} className="mx-auto">
-                                  {elt}
-                                </SelectItem>
-                              </div>
-                            ))}
-                          </div>
-                        </TabsContent>
-                        <TabsContent value="audio">
-                          <div className="grid grid-cols-3 gap-2 w-fit">
-                            {extensions.audio.map((elt, i) => (
-                              <div key={i} className="col-span-1 text-center">
-                                <SelectItem value={elt} className="mx-auto">
-                                  {elt}
-                                </SelectItem>
-                              </div>
-                            ))}
-                          </div>
-                        </TabsContent>
-                      </Tabs>
-                    )}
-                    {action.file_type.includes("audio") && (
-                      <div className="grid grid-cols-2 gap-2 w-fit">
-                        {extensions.audio.map((elt, i) => (
-                          <div key={i} className="col-span-1 text-center">
-                            <SelectItem value={elt} className="mx-auto">
-                              {elt}
-                            </SelectItem>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+                      <span className="text-xs text-muted-foreground w-8">
+                        {Math.round(action.progress)}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-muted-foreground text-md flex items-center gap-4">
+                  <span>Convert to</span>
+                  <Select
+                    onValueChange={(value) => {
+                      if (extensions.audio.includes(value)) {
+                        setDefaultValues("audio");
+                      } else if (extensions.video.includes(value)) {
+                        setDefaultValues("video");
+                      }
+                      setSelected(value);
+                      updateAction(action.file_name, value);
+                    }}
+                    value={selcted}
+                  >
+                    <SelectTrigger className="w-32 outline-none focus:outline-none focus:ring-0 text-center text-muted-foreground bg-background text-md font-medium">
+                      <SelectValue placeholder="..." />
+                    </SelectTrigger>
+                    <SelectContent className="h-fit">
+                      {action.file_type.includes("image") && (
+                        <div className="grid grid-cols-2 gap-2 w-fit">
+                          {extensions.image.map((elt, i) => (
+                            <div key={i} className="col-span-1 text-center">
+                              <SelectItem value={elt} className="mx-auto">
+                                {elt}
+                              </SelectItem>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {action.file_type.includes("video") && (
+                        <Tabs defaultValue={defaultValues} className="w-full">
+                          <TabsList className="w-full">
+                            <TabsTrigger value="video" className="w-full">
+                              Video
+                            </TabsTrigger>
+                            <TabsTrigger value="audio" className="w-full">
+                              Audio
+                            </TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="video">
+                            <div className="grid grid-cols-3 gap-2 w-fit">
+                              {extensions.video.map((elt, i) => (
+                                <div key={i} className="col-span-1 text-center">
+                                  <SelectItem value={elt} className="mx-auto">
+                                    {elt}
+                                  </SelectItem>
+                                </div>
+                              ))}
+                            </div>
+                          </TabsContent>
+                          <TabsContent value="audio">
+                            <div className="grid grid-cols-3 gap-2 w-fit">
+                              {extensions.audio.map((elt, i) => (
+                                <div key={i} className="col-span-1 text-center">
+                                  <SelectItem value={elt} className="mx-auto">
+                                    {elt}
+                                  </SelectItem>
+                                </div>
+                              ))}
+                            </div>
+                          </TabsContent>
+                        </Tabs>
+                      )}
+                      {action.file_type.includes("audio") && (
+                        <div className="grid grid-cols-2 gap-2 w-fit">
+                          {extensions.audio.map((elt, i) => (
+                            <div key={i} className="col-span-1 text-center">
+                              <SelectItem value={elt} className="mx-auto">
+                                {elt}
+                              </SelectItem>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-            {action.is_converted ? (
-              <Button variant="outline" onClick={() => download(action)}>
-                Download
-              </Button>
-            ) : (
-              <span
-                onClick={() => deleteAction(action)}
-                className="cursor-pointer hover:bg-muted rounded-full h-10 w-10 flex items-center justify-center text-2xl text-foreground"
-              >
-                <MdClose />
-              </span>
-            )}
+              {action.is_converted ? (
+                <div className="flex items-center gap-3">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => onPreview?.(action)}
+                    className="flex items-center gap-2 h-9 px-3"
+                  >
+                    <HiOutlineEye className="h-4 w-4" />
+                    Preview
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => download(action)}
+                    className="flex items-center gap-2 h-9 px-3"
+                  >
+                    <HiOutlineDownload className="h-4 w-4" />
+                    Download
+                  </Button>
+                </div>
+              ) : (
+                <span
+                  onClick={() => deleteAction(action)}
+                  className="cursor-pointer hover:bg-muted rounded-full h-10 w-10 flex items-center justify-center text-2xl text-foreground transition-colors"
+                >
+                  <MdClose />
+                </span>
+              )}
+            </div>
           </div>
         ))}
         <div className="flex w-full justify-end">
           {is_done ? (
             <div className="space-y-4 w-fit">
+              {actions.length > 1 && (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="rounded-xl font-semibold relative py-4 text-md flex gap-2 items-center w-full"
+                  onClick={() => {
+                    const firstConverted = actions.find(action => action.is_converted && !action.is_error);
+                    if (firstConverted && onPreview) {
+                      onPreview(firstConverted);
+                    }
+                  }}
+                >
+                  <HiOutlineEye className="h-5 w-5" />
+                  Preview Files
+                </Button>
+              )}
               <Button
                 size="lg"
                 className="rounded-xl font-semibold relative py-4 text-md flex gap-2 items-center w-full"
@@ -401,6 +512,17 @@ export default function Dropzone() {
             </Button>
           )}
         </div>
+
+        {/* Progress Toast */}
+        {showProgressToast && (
+          <ProgressToast
+            fileName={currentProgress.fileName}
+            progress={currentProgress.progress}
+            status={currentProgress.status}
+            isComplete={currentProgress.progress === 100}
+            onClose={() => setShowProgressToast(false)}
+          />
+        )}
       </div>
     );
   }
