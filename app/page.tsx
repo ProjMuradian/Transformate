@@ -30,9 +30,7 @@ export default function Home() {
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white">
               Transformate
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300">
-              by Muradian
-            </p>
+          
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               The most powerful online file converter and video transcription tool. 
               Transform your files instantly and free.
