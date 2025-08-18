@@ -26,14 +26,27 @@ export default function Home() {
             {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="container mx-auto px-4 py-24 lg:py-32">
-          <div className="text-center space-y-6">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white">
-              Transformate
+          <div className="text-center space-y-8 max-w-5xl mx-auto">
+            {/* Badge */}
+            <div className="flex justify-center">
+              <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
+                ✨ 100% Free • No Limits • No Registration Required
+              </Badge>
+            </div>
+
+            {/* Main Heading */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-violet-900 dark:from-white dark:via-purple-200 dark:to-violet-200 bg-clip-text text-transparent leading-tight">
+              Transform Your Files
+              <br />
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                & Transcribe Videos
+              </span>
             </h1>
-          
-            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              The most powerful online file converter and video transcription tool. 
-              Transform your files instantly and free.
+
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              The most powerful online file converter and video transcription tool. Transform images, videos,
+              and audio files with cutting-edge technology. Plus, get AI-powered video transcriptions instantly.
             </p>
 
             {/* CTA Buttons */}
@@ -43,7 +56,7 @@ export default function Home() {
                   size="lg"
                   className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                   <FiUploadCloud className="mr-2 h-5 w-5" />
-                  File Converter
+                  Start Converting Now
                 </Button>
               </Link>
               <Link href="/transcribe">
@@ -51,7 +64,7 @@ export default function Home() {
                   size="lg"
                   className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0 px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                   <FiMic className="mr-2 h-5 w-5" />
-                  Video Transcription
+                  Transcribe Videos
                 </Button>
               </Link>
               <Button
