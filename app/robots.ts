@@ -14,6 +14,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/_next/', '/admin/'],
     },
-    sitemap: 'https://muradianconvertor.com/sitemap.xml',
+    sitemap: 'https://transformate.vercel.app/sitemap.xml',
   }
 }

@@ -10,7 +10,7 @@ import { MetadataRoute } from 'next'
 export default function sitemapIndex(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://muradianconvertor.com/sitemap.xml',
+      url: 'https://transformate.vercel.app/sitemap.xml',
       lastModified: new Date(),
     },
   ]
